@@ -41,15 +41,28 @@ void test()
         unsigned char input[] = "KxFC1jmwwCoACiCAWZ3eXa96mBM6tb3TYzGmf6YwgdGWZgawvrtJ";
         unsigned char output[] = 
         { 
-            0x80, 
+            0x80,
             0x1E, 0x99, 0x42, 0x3A, 0x4E, 0xD2, 0x76, 0x08, 0xA1, 0x5A, 0x26, 0x16, 0xA2, 0xB0, 0xE9, 0xE5, 
             0x2C, 0xED, 0x33, 0x0A, 0xC5, 0x30, 0xED, 0xCC, 0x32, 0xC8, 0xFF, 0xC6, 0xA5, 0x26, 0xAE, 0xDD, 
-            0x01, 
-            0x76, 0x95, 0x73, 0x8B
         };
-        unsigned char output_[38];
+        unsigned char output_[33];
+        output_[0] = 0x80;
         base58_decode(input, output_);
-        TEST("base58_decode", check(output, output_, 38), 10000000, base58_decode(input, output_))
+        TEST("base58_decode", check(output, output_, 33), base58_decode(input, output_))
+    }
+    {
+        unsigned char input[] = 
+        { 
+            0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x6D, 0x79, 0x20, 0x6E, 0x61, 0x6D, 0x65, 0x20, 0x69, 
+            0x73, 0x20, 0x56, 0x69, 0x6B, 0x74, 0x6F, 0x72, 0x20, 0x59, 0x75, 0x73, 0x6B, 0x6F, 0x76, 0x79
+        };
+        unsigned char output[] = 
+        { 
+            0x88, 0x3C, 0x7C, 0x1A, 0x88, 0x1B, 0x45, 0xE1, 0xAE, 0x84, 0xF5, 0x82, 0x2C, 0xA2, 0x7F, 0xE5, 0x22, 0xE3, 0x29, 0xDE
+        };
+        unsigned char output_[20];
+        ripemd160(input, output_);
+        TEST("ripemd160", check(output, output_, 20), ripemd160(input, output_))
     }
     {
         bool result = true;
@@ -83,7 +96,25 @@ void test()
         unsigned char output34_[32];
         sha256(input34, output34_);
         result &= check(output34, output34_, 32);
-        TEST("sha256", result, 10000000, sha256(input32, output32_))
+        TEST("sha256", result, sha256(input32, output32_))
+    }
+    {
+        unsigned char wif[] = "L5EZftvrYaSudiozVRzTqLcHLNDoVn7H5HSfM9BAN6tMJX8oTWz6";
+        unsigned char extended_key[64] = { 0 };
+        extended_key[0] = 0x80;
+        extended_key[33] = 0x01;
+        extended_key[34] = 0x80;
+        extended_key[62] = 0x01;
+        extended_key[63] = 0x10;
+        unsigned char digest1[64] = { 0 };
+        digest1[32] = 0x80;
+        digest1[62] = 0x01;
+        unsigned char digest2[32];
+        base58_decode(wif, extended_key);
+        sha256(extended_key, digest1);
+        sha256(digest1, digest2);
+        unsigned char checksum[] = { 0x66, 0x55, 0x7E, 0x53 };
+        TEST("checksum", check(digest2, checksum, 4), ;)
     }
     std::cout << "[I] TESTING FINISHED SUCCESSFULLY" << std::endl;
 }

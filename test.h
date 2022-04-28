@@ -5,9 +5,11 @@
 #include <string>
 
 #include "base58.h"
+#include "ripemd160.h"
 #include "sha256.h"
 
-#define TEST(name, result, iterations, call) if (result) { std::cout << "[I] Test is passed: " << name; Timer timer; if (iterations) { for (int i = 0; i < iterations; i++) call; std::cout << " [" << timer.stop(iterations) << " ns]"; } std::cout << std::endl; } else { std::cout << "[I] Test is failed: " << name << std::endl; return; }
+#define ITERATIONS 0
+#define TEST(name, result, call) if (result) { std::cout << "[I] Test is passed: " << name; Timer timer; if (ITERATIONS) { for (int i = 0; i < ITERATIONS; i++) call; std::cout << " [" << timer.stop(ITERATIONS) << " ns]"; } std::cout << std::endl; } else { std::cout << "[I] Test is failed: " << name << std::endl; return; }
 
 struct Timer
 {
